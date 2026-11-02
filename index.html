@@ -87,6 +87,9 @@
     .item-row { display: flex; align-items: center; gap: 8px; }
     .item-num { font-size: 12px; color: #999; width: 16px; }
     .item-name { flex: 1; font-weight: 600; font-size: 15px; }
+    .ex-link { color: inherit; text-decoration: none; }
+    .ex-link:hover, .ex-link:focus { text-decoration: underline; }
+    .ex-link::after { content: " ↗"; font-size: 12px; color: #999; font-weight: 400; }
     .item-tools { display: flex; align-items: center; gap: 2px; }
     .icon-btn {
       background: none; border: none; cursor: pointer; font-size: 15px;
@@ -323,6 +326,9 @@ function totalMin(day) {
 function todayKey() {
   return weekdays[(new Date().getDay() + 6) % 7].key;
 }
+// Länk till Google-sökning på övningens namn
+const googleLink = ex =>
+  `<a class="ex-link" href="https://www.google.com/search?q=${encodeURIComponent(ex.name + " fotbollsövning barn")}" target="_blank" rel="noopener">${esc(ex.name)}</a>`;
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
 
 /* =====================================================================
@@ -396,7 +402,7 @@ function renderDayPanel(day) {
       html += `<div class="item" style="--c:${c.color}">
         <div class="item-row">
           <span class="item-num">${i + 1}</span>
-          <span class="item-name">${esc(ex.name)}</span>
+          <span class="item-name">${googleLink(ex)}</span>
           <span class="item-tools">
             <button class="icon-btn" data-act="up" data-i="${i}" ${i === 0 ? "disabled" : ""} title="Flytta upp">▲</button>
             <button class="icon-btn" data-act="down" data-i="${i}" ${i === items.length - 1 ? "disabled" : ""} title="Flytta ner">▼</button>
@@ -477,7 +483,7 @@ function renderBank() {
     html += `<div class="ex" style="--c:${c.color}">
       <div class="ex-row">
         <div>
-          <div class="ex-name">${esc(e.name)}</div>
+          <div class="ex-name">${googleLink(e)}</div>
           <div class="ex-info"><span class="badge" style="--c:${c.color}">${c.name}</span> ⏱ ${e.minutes} min</div>
         </div>
         <button class="btn add-btn ${added ? "added" : ""}" data-add="${e.id}">${added ? "✓ Tillagd" : "+ " + tLabel}</button>
