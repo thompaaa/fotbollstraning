@@ -30,9 +30,8 @@ Allt ligger i `index.html` – ingen server, ingen databas, inga beroenden.
 
 ## Publicera på GitHub Pages
 
-1. Skapa ett nytt repo och lägg filerna i den här mappen i repots rot.
-2. Settings → Pages → Deploy from branch → `main` / root.
-3. Öppna sidan i mobilen och välj "Lägg till på hemskärmen".
+1. Settings → Pages → Deploy from branch → `main` / root.
+2. Öppna sidan i mobilen (https://thompaaa.github.io/fotbollstraning/) och välj "Lägg till på hemskärmen".
 
 Förhandsgranska lokalt:
 
