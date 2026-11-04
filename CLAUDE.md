@@ -8,7 +8,7 @@
 
 - `categories{}` — category key → name + color.
 - `exercises[]` — static exercise bank edited by hand (id, category, name, minutes, desc, tip, gear, optional search = custom Google query for the title link). `id` must stay stable; saved sessions reference it. Unknown ids are skipped when rendering.
-- `plans` — object keyed by weekday (`mon`…`sun`): `{ items: [{id, min}], done, note }`, persisted to `localStorage` under `fotboll_veckopass`.
+- `plans` — object keyed by weekday (`mon`…`sun`): `{ items: [{id, min}], done }`, persisted to `localStorage` under `fotboll_veckopass`.
 - `render()` rebuilds `#main` on every state change. Two tabs: "Veckans pass" (weekday grid + session panel) and "Övningar" (bank with category filter, search, and add buttons). `pickerDay` marks which day the bank adds to.
 
 ## Conventions

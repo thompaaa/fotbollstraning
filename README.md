@@ -9,8 +9,7 @@ Allt ligger i `index.html` – ingen server, ingen databas, inga beroenden.
 - **Veckans pass**: välj veckodag (mån–sön) och bygg ett pass av övningar.
 - Tid per övning (förvald, kan justeras med − / +) och **total tid** för passet.
 - Fördelning per kategori (stapel) så du ser balansen i passet.
-- Ändra ordning, ta bort, anteckningar, kopiera passet som text, skriv ut,
-  kopiera ett pass till en annan dag.
+- Ändra ordning och ta bort övningar.
 - **Markera genomfört** per pass, och "Ny vecka" för att nollställa markeringarna.
 - Sparas i `localStorage` – alltså bara på den enhet du använder.
 

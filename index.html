@@ -110,11 +110,6 @@
 
     .empty { text-align: center; color: #888; font-size: 14px; padding: 18px 8px; }
 
-    textarea {
-      width: 100%; margin-top: 12px; border: 1px solid #ddd; border-radius: 8px; padding: 8px 10px;
-      font-family: inherit; font-size: 14px; resize: vertical; min-height: 54px;
-    }
-
     /* Övningsbank */
     .filters { display: flex; flex-wrap: wrap; gap: 6px; }
     .chip {
@@ -153,11 +148,6 @@
       transition: transform 0.25s, opacity 0.25s; pointer-events: none; opacity: 0;
     }
     #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-    @media print {
-      #tabs, .btn-row, .item-tools, .stepper button, #toast { display: none !important; }
-      body { background: #fff; }
-    }
   </style>
 </head>
 <body>
@@ -510,7 +500,7 @@ function save() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(plans)); } catch {}
 }
 
-// plans[dayKey] = { items: [{id, min}], done: bool, note: "" }
+// plans[dayKey] = { items: [{id, min}], done: bool }
 let plans = load();
 let tab = "plan";
 let openDay = null;
@@ -519,7 +509,7 @@ let filterCat = "alla";
 let search = "";
 
 function getPlan(day) {
-  if (!plans[day]) plans[day] = { items: [], done: false, note: "" };
+  if (!plans[day]) plans[day] = { items: [], done: false };
   return plans[day];
 }
 function validItems(day) {
@@ -628,13 +618,9 @@ function renderDayPanel(day) {
     html += `</div>`;
   }
 
-  html += `<textarea data-act="note" placeholder="Anteckningar (t.ex. tid, plats, vilka som var med)">${esc(p.note || "")}</textarea>
-    <div class="btn-row">
+  html += `<div class="btn-row">
       <button class="btn solid" data-act="add">+ Lägg till övning</button>
-      ${items.length ? `<button class="btn" data-act="copy">Kopiera som text</button>
-      <button class="btn ghost" data-act="print">Skriv ut</button>
-      <button class="btn ghost" data-act="duplicate">Kopiera till dag…</button>
-      <button class="btn danger" data-act="clear">Töm passet</button>` : ""}
+      ${items.length ? `<button class="btn danger" data-act="clear">Töm passet</button>` : ""}
     </div>
   </div>`;
   return html;
@@ -713,18 +699,6 @@ function toast(msg) {
   toast.timer = setTimeout(() => t.classList.remove("show"), 1800);
 }
 
-function planAsText(day) {
-  const d = weekdays.find(w => w.key === day);
-  const items = validItems(day);
-  const lines = [`⚽ Träning ${d.long} – ${totalMin(day)} min`, ""];
-  items.forEach((it, i) => {
-    const ex = exById[it.id];
-    lines.push(`${i + 1}. ${ex.name} (${it.min} min) – ${categories[ex.category].name}`);
-  });
-  if (plans[day].note) lines.push("", plans[day].note);
-  return lines.join("\n");
-}
-
 document.getElementById("tabs").addEventListener("click", e => {
   const t = e.target.closest(".tab");
   if (!t) return;
@@ -785,23 +759,7 @@ main.addEventListener("click", e => {
       openDay = pickerDay; pickerDay = null; tab = "plan"; render(); window.scrollTo(0, 0); return;
     case "clear":
       if (!confirm("Töm hela passet?")) return;
-      plans[openDay] = { items: [], done: false, note: "" }; break;
-    case "copy":
-      navigator.clipboard?.writeText(planAsText(openDay))
-        .then(() => toast("Passet kopierat"))
-        .catch(() => toast("Kunde inte kopiera"));
-      return;
-    case "print": window.print(); return;
-    case "duplicate": {
-      const names = weekdays.filter(w => w.key !== openDay).map(w => w.short).join(", ");
-      const ans = (prompt(`Kopiera till vilken dag? (${names})`) || "").trim().toLowerCase();
-      const target = weekdays.find(w => w.short.toLowerCase() === ans.slice(0, 3));
-      if (!target || target.key === openDay) { if (ans) toast("Okänd dag"); return; }
-      if (validItems(target.key).length && !confirm(`${target.long} har redan ett pass. Ersätt?`)) return;
-      plans[target.key] = { items: p.items.map(it => ({ ...it })), done: false, note: p.note || "" };
-      toast(`Kopierat till ${target.long}`);
-      break;
-    }
+      plans[openDay] = { items: [], done: false }; break;
     case "new-week":
       if (!confirm("Nollställ alla \"genomfört\"-markeringar? Passen ligger kvar.")) return;
       Object.values(plans).forEach(pl => pl.done = false); break;
@@ -812,10 +770,6 @@ main.addEventListener("click", e => {
 });
 
 main.addEventListener("input", e => {
-  if (e.target.dataset.act === "note" && openDay) {
-    getPlan(openDay).note = e.target.value;
-    save();
-  }
   if (e.target.dataset.act === "search") {
     search = e.target.value;
     const pos = e.target.selectionStart;
